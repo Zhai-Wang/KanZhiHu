@@ -10,6 +10,7 @@ import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.model.IndexAdapter;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
+import com.zhai.kanzhihu.util.ParseJson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +41,7 @@ public class IndexActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        indexList = parseIndexJson(response);
+                        indexList = ParseJson.parseIndexJson(response);
                         IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this, indexList);
                         ListView listView = (ListView) findViewById(R.id.lv_index);
                         listView.setAdapter(indexAdapter);
@@ -63,27 +64,5 @@ public class IndexActivity extends Activity {
 
     }
 
-    /**
-     * 解析首页返回的Json数据
-     * @param response
-     * @return
-     */
-    private List<Index> parseIndexJson(String response){
-        List<Index> list = new ArrayList<>();
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            JSONArray jsonArray = jsonObject.getJSONArray("posts");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonObject = jsonArray.getJSONObject(i);
-                String indexImgUrl = jsonObject.getString("pic");
-                String indexTitle = jsonObject.getString("date") + "  " + jsonObject.getString("name");
-                String indexContent = jsonObject.getString("excerpt");
-                Index index = new Index(indexImgUrl, indexTitle, indexContent);
-                list.add(index);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+
 }

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zhai.kanzhihu.R;
+import com.zhai.kanzhihu.util.ImageLoader;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class IndexAdapter extends BaseAdapter {
     private List<Index> indexList;
     private LayoutInflater inflater;
 
-    public IndexAdapter(Context context, List<Index> data){
+    public IndexAdapter(Context context, List<Index> data) {
         indexList = data;
         inflater = LayoutInflater.from(context);
     }
@@ -44,14 +45,19 @@ public class IndexAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
-        if(convertView == null){
+        if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.index_item, null);
             viewHolder.indexImg = (ImageView) convertView.findViewById(R.id.index_item_img);
+
+            String url = indexList.get(position).getIndexImgUrl();
+            viewHolder.indexImg.setTag(url);
+            new ImageLoader().loadImage(viewHolder.indexImg, url);
+
             viewHolder.indexTitle = (TextView) convertView.findViewById(R.id.index_item_title);
             viewHolder.indexContent = (TextView) convertView.findViewById(R.id.index_item_content);
             convertView.setTag(viewHolder);
-        }else{
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.indexImg.setImageResource(R.mipmap.ic_launcher);
@@ -60,7 +66,7 @@ public class IndexAdapter extends BaseAdapter {
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
         public ImageView indexImg;
         public TextView indexTitle, indexContent;
     }
