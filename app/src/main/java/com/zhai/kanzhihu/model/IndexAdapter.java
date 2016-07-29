@@ -44,10 +44,10 @@ public class IndexAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.index_item, null);
+            convertView = inflater.inflate(R.layout.index_item, parent, false);
             viewHolder.indexImg = (ImageView) convertView.findViewById(R.id.index_item_img);
 
             String url = indexList.get(position).getIndexImgUrl();
@@ -56,6 +56,7 @@ public class IndexAdapter extends BaseAdapter {
 
             viewHolder.indexTitle = (TextView) convertView.findViewById(R.id.index_item_title);
             viewHolder.indexContent = (TextView) convertView.findViewById(R.id.index_item_content);
+            viewHolder.indexTag = (TextView) convertView.findViewById(R.id.index_item_tag);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -63,11 +64,12 @@ public class IndexAdapter extends BaseAdapter {
         viewHolder.indexImg.setImageResource(R.mipmap.ic_launcher);
         viewHolder.indexTitle.setText(indexList.get(position).getIndexTitle());
         viewHolder.indexContent.setText(indexList.get(position).getIndexContent());
+        viewHolder.indexTag.setText(indexList.get(position).getIndexTag());
         return convertView;
     }
 
     class ViewHolder {
         public ImageView indexImg;
-        public TextView indexTitle, indexContent;
+        public TextView indexTitle, indexContent, indexTag;
     }
 }
