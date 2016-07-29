@@ -3,4 +3,6 @@
     <string name="history">历史精华</string>
     <string name="recent">近日热门</string>
     <string name="yesterday">昨日最新</string>
+    <string name="item_history">历史精华</string>
+    <string name="index_img">index</string>
 </resources>

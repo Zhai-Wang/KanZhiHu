@@ -5,9 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +23,9 @@ public class ImageLoader {
         new indexAsyncTask(imageView, url).execute(url);
     }
 
+    /**
+     * 利用AsyncTask来完成异步加载
+     */
     private class indexAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
         private ImageView imageView;
@@ -43,9 +44,7 @@ public class ImageLoader {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            if(imageView.getTag().equals(url)){
-                imageView.setImageBitmap(bitmap);
-            }
+            imageView.setImageBitmap(bitmap);
         }
     }
 
@@ -53,23 +52,18 @@ public class ImageLoader {
      * 根据url来获取bitmap
      */
     private Bitmap getBitmapFromUrl(String urlString) {
+
         Bitmap bitmap = null;
-        InputStream is = null;
+        HttpURLConnection connection = null;
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            is = new BufferedInputStream(connection.getInputStream());
-            bitmap = BitmapFactory.decodeStream(is);
-            connection.disconnect();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            URL mUrl = new URL(urlString);
+            connection = (HttpURLConnection) mUrl.openConnection();
+            bitmap = BitmapFactory.decodeStream(connection.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (connection != null) {
+                connection.disconnect();
             }
         }
         return bitmap;

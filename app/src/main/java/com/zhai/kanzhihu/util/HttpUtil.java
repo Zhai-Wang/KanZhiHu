@@ -3,6 +3,7 @@ package com.zhai.kanzhihu.util;
 import android.os.Handler;
 import android.os.Message;
 import android.renderscript.ScriptGroup;
+import android.util.Log;
 
 import com.zhai.kanzhihu.model.Index;
 
@@ -29,9 +30,6 @@ public class HttpUtil {
 
     /**
      * 请求服务器数据
-     *
-     * @param address
-     * @param listener
      */
     public static void sendHttpRequest(final String address, final HttpCallbackListener listener) {
 
@@ -70,6 +68,26 @@ public class HttpUtil {
         }).start();
     }
 
-
-
+    /**
+     * 解析首页返回的Json数据
+     */
+    public static List<Index> parseIndexJson(String response) {
+        List<Index> list = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("posts");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonObject = jsonArray.getJSONObject(i);
+                String indexImgUrl = jsonObject.getString("pic");
+                String indexTitle = jsonObject.getString("date");
+                String indexTag = jsonObject.getString("name");
+                String indexContent = jsonObject.getString("excerpt");
+                Index index = new Index(indexImgUrl, indexTitle, indexContent, indexTag);
+                list.add(index);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

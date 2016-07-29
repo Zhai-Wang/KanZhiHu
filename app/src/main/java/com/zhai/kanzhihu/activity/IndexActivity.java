@@ -10,11 +10,6 @@ import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.model.IndexAdapter;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
-import com.zhai.kanzhihu.util.ParseJson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +20,7 @@ import java.util.List;
  */
 public class IndexActivity extends Activity {
 
-    private List<Index> indexList = new ArrayList<Index>();
+    private List<Index> indexList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +36,7 @@ public class IndexActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        indexList = ParseJson.parseIndexJson(response);
+                        indexList = HttpUtil.parseIndexJson(response);
                         IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this, indexList);
                         ListView listView = (ListView) findViewById(R.id.lv_index);
                         listView.setAdapter(indexAdapter);
@@ -55,7 +50,7 @@ public class IndexActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(IndexActivity.this, "Error", Toast.LENGTH_SHORT);
+                        Toast.makeText(IndexActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
