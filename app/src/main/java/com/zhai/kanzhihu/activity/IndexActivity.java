@@ -22,6 +22,7 @@ import java.util.List;
 public class IndexActivity extends Activity {
 
     private List<Index> indexList = new ArrayList<>();
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +30,10 @@ public class IndexActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.index_layout);
 
+        listView = (ListView) findViewById(R.id.lv_index);
+
         //发送请求，获取首页文章列表
-        HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener(){
+        HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener() {
 
             @Override
             public void onFinish(final String response) {
@@ -39,8 +42,9 @@ public class IndexActivity extends Activity {
                     @Override
                     public void run() {
                         indexList = HttpUtil.parseIndexJson(response);
-                        IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this, indexList);
-                        ListView listView = (ListView) findViewById(R.id.lv_index);
+
+                        IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this,
+                                indexList, listView);
                         listView.setAdapter(indexAdapter);
                     }
                 });
@@ -60,6 +64,5 @@ public class IndexActivity extends Activity {
 
 
     }
-
 
 }

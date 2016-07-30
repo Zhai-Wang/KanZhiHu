@@ -5,9 +5,15 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
+import android.widget.ListView;
+
+import com.zhai.kanzhihu.R;
+import com.zhai.kanzhihu.model.IndexAdapter;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by 某宅 on 2016/7/27.
@@ -18,7 +24,14 @@ public class ImageLoader {
     private static ImageLoader imageLoader;
     public static LruCache<String, Bitmap> memoryCaches;
 
-    private ImageLoader() {
+    private ListView listView;
+    private Set<indexAsyncTask> tasks;//保存当前异步加载的对象
+
+    //私有化构造方法以保证对象全局唯一性
+    private ImageLoader(ListView listView) {
+        this.listView = listView;
+        tasks = new HashSet<>();
+
         //设定缓存区的大小
         int maxMemory = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxMemory / 4;
@@ -30,24 +43,44 @@ public class ImageLoader {
         };
     }
 
-    public static ImageLoader getImageLoader() {
+    //单例化ImageLoader
+    public static ImageLoader getImageLoader(ListView mListView) {
         if (imageLoader == null) {
-            imageLoader = new ImageLoader();
+            imageLoader = new ImageLoader(mListView);
         }
         return imageLoader;
     }
 
     /**
-     * 从url获取bitmap,设置给ImageView
+     * 获取屏幕中item的下标范围，加载范围中的图片
      */
-    public void loadImage(ImageView imageView, String url) {
+    public void loadImage(int start, int end) {
+        for (int i = start; i < end; i++) {
+            String imgUrl = IndexAdapter.imgUrls[i];
+            Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
+            ImageView imageView = (ImageView) listView.findViewWithTag(imgUrl);
+            if (imageView != null && bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            } else {
+                //若不存在，开启线程下载
+                indexAsyncTask mTask = new indexAsyncTask(imgUrl);
+                mTask.execute(imgUrl);
+                tasks.add(mTask);
+            }
+        }
+    }
 
-        //若有缓存，优先从缓存中获取bitmap
+    /**
+     * 若缓存中存在bitmap，直接设置
+     * 反之设置默认的本地图片
+     */
+    public void showImg(ImageView imageView, String url) {
         Bitmap bitmap = getBitmapFromLruCache(url);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {
-            new indexAsyncTask(imageView, url).execute(url);//没有就开启线程下载
+            //初始化ImageView的图片，未加载网络图片时显示
+            imageView.setImageResource(R.mipmap.ic_launcher);
         }
     }
 
@@ -56,11 +89,9 @@ public class ImageLoader {
      */
     private class indexAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
-        private ImageView imageView;
         private String url;
 
-        public indexAsyncTask(ImageView imageView, String url) {
-            this.imageView = imageView;
+        public indexAsyncTask(String url) {
             this.url = url;
         }
 
@@ -77,9 +108,11 @@ public class ImageLoader {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            if (imageView.getTag().equals(url)) {
+            ImageView imageView = (ImageView) listView.findViewWithTag(url);
+            if (imageView != null && bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             }
+            tasks.remove(this);
         }
     }
 
@@ -118,6 +151,18 @@ public class ImageLoader {
     public void addBitmapToLruCache(String url, Bitmap bitmap) {
         if (getBitmapFromLruCache(url) == null) {
             memoryCaches.put(url, bitmap);
+        }
+    }
+
+    /**
+     * 遍历tasks中的对象
+     * 取消加载任务
+     */
+    public void cancelTask() {
+        if (tasks != null) {
+            for (indexAsyncTask task : tasks) {
+                task.cancel(false);
+            }
         }
     }
 }

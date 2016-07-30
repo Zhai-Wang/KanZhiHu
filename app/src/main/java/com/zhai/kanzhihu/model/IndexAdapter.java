@@ -4,8 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zhai.kanzhihu.R;
@@ -17,16 +19,28 @@ import java.util.List;
  * 自定义首页listview的adapter
  * Created by 某宅 on 2016/7/25.
  */
-public class IndexAdapter extends BaseAdapter {
+public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
 
     private List<Index> indexList;
     private LayoutInflater inflater;
     private ImageLoader imageLoader;
+    public static String[] imgUrls;//用来集合图片url
+    private int start, end;//标志屏幕中起始item的下标
+    private Boolean isFirstIn;//记录是否首次启动
 
-    public IndexAdapter(Context context, List<Index> data) {
+    public IndexAdapter(Context context, List<Index> data, ListView listView) {
         indexList = data;
         inflater = LayoutInflater.from(context);
-        imageLoader = ImageLoader.getImageLoader();
+        imageLoader = ImageLoader.getImageLoader(listView);
+        isFirstIn = true;
+
+        //将图片的url转入数组imgUrls中
+        imgUrls = new String[indexList.size()];
+        for (int i = 0; i < indexList.size(); i++) {
+            imgUrls[i] = indexList.get(i).getIndexImgUrl();
+        }
+
+        listView.setOnScrollListener(this);
     }
 
     @Override
@@ -59,11 +73,10 @@ public class IndexAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.indexImg.setImageResource(R.mipmap.ic_launcher);
-        //设置tag防止图片错位
+        //为每一个ImageView设置tag
         viewHolder.indexImg.setTag(indexList.get(position).getIndexImgUrl());
-
-        imageLoader.loadImage(viewHolder.indexImg, indexList.get(position).getIndexImgUrl());
+        //设置显示的图片
+        imageLoader.showImg(viewHolder.indexImg, indexList.get(position).getIndexImgUrl());
 
         viewHolder.indexTitle.setText(indexList.get(position).getIndexTitle());
         viewHolder.indexContent.setText(indexList.get(position).getIndexContent());
@@ -74,5 +87,32 @@ public class IndexAdapter extends BaseAdapter {
     class ViewHolder {
         public ImageView indexImg;
         public TextView indexTitle, indexContent, indexTag;
+    }
+
+
+    /**
+     * 监听listview的滑动来执行图片加载任务
+     */
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollState == SCROLL_STATE_IDLE) {
+            //停止滑动时，加载图片
+            imageLoader.loadImage(start, end);
+        } else {
+            //滑动时停止加载任务
+            imageLoader.cancelTask();
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                         int totalItemCount) {
+        start = firstVisibleItem;
+        end = firstVisibleItem + visibleItemCount;
+        //首次加载时并未滑动，要初始化屏幕内的内容
+        if (isFirstIn && visibleItemCount > 0) {
+            imageLoader.loadImage(start, end);
+            isFirstIn = false;
+        }
     }
 }
