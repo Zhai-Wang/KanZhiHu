@@ -21,10 +21,12 @@ public class IndexAdapter extends BaseAdapter {
 
     private List<Index> indexList;
     private LayoutInflater inflater;
+    private ImageLoader imageLoader;
 
     public IndexAdapter(Context context, List<Index> data) {
         indexList = data;
         inflater = LayoutInflater.from(context);
+        imageLoader = ImageLoader.getImageLoader();
     }
 
     @Override
@@ -49,11 +51,6 @@ public class IndexAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.index_item, parent, false);
             viewHolder.indexImg = (ImageView) convertView.findViewById(R.id.index_item_img);
-
-            String url = indexList.get(position).getIndexImgUrl();
-            viewHolder.indexImg.setTag(url);
-            new ImageLoader().loadImage(viewHolder.indexImg, url);
-
             viewHolder.indexTitle = (TextView) convertView.findViewById(R.id.index_item_title);
             viewHolder.indexContent = (TextView) convertView.findViewById(R.id.index_item_content);
             viewHolder.indexTag = (TextView) convertView.findViewById(R.id.index_item_tag);
@@ -61,7 +58,13 @@ public class IndexAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
         viewHolder.indexImg.setImageResource(R.mipmap.ic_launcher);
+        //设置tag防止图片错位
+        viewHolder.indexImg.setTag(indexList.get(position).getIndexImgUrl());
+
+        imageLoader.loadImage(viewHolder.indexImg, indexList.get(position).getIndexImgUrl());
+
         viewHolder.indexTitle.setText(indexList.get(position).getIndexTitle());
         viewHolder.indexContent.setText(indexList.get(position).getIndexContent());
         viewHolder.indexTag.setText(indexList.get(position).getIndexTag());
