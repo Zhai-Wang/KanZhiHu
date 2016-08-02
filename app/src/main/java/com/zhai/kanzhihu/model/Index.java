@@ -31,16 +31,7 @@ public class Index {
     }
 
     public String getIndexTag(){
-        switch (indexTag){
-            case "archive":
-                return "历史精华";
-            case "yesterday":
-                return "昨日最新";
-            case "recent":
-                return "今日热门";
-            default:
-                return "历史精华";
-        }
+        return indexTag;
     }
 
 }

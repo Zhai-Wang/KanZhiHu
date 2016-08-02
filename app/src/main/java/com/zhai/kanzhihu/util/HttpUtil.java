@@ -5,6 +5,7 @@ import android.os.Message;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
 
+import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.model.Index;
 
 import org.json.JSONArray;
@@ -89,5 +90,32 @@ public class HttpUtil {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /**
+     * 解析答案详情页的Json数据
+     */
+    public static List<Answer> parseAnswerJson(String response) {
+        List<Answer> answerList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("answers");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonObject = jsonArray.getJSONObject(i);
+                String answerTitle = jsonObject.getString("title");
+                String answerContent = jsonObject.getString("summary");
+                String questionId = jsonObject.getString("questionid");
+                String answerId = jsonObject.getString("answerid");
+                String authorName = jsonObject.getString("authorname");
+                String authorImg = jsonObject.getString("avatar");
+                authorName += "   (" + jsonObject.getString("vote") + ")";
+                Answer answer = new Answer(answerTitle, authorName, answerContent, authorImg,
+                        questionId, answerId);
+                answerList.add(answer);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return answerList;
     }
 }

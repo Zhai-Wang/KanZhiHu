@@ -8,7 +8,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.zhai.kanzhihu.R;
-import com.zhai.kanzhihu.model.IndexAdapter;
+import com.zhai.kanzhihu.activity.AnswerAdapter;
+import com.zhai.kanzhihu.activity.IndexAdapter;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,48 +23,62 @@ import java.util.Set;
 public class ImageLoader {
 
     private static ImageLoader imageLoader;
-    public static LruCache<String, Bitmap> memoryCaches;
-
     private ListView listView;
-    private Set<indexAsyncTask> tasks;//保存当前异步加载的对象
+    private Set<imgAsyncTask> tasks;//保存当前异步加载的对象
+    private static LruCache<String, Bitmap> memoryCaches;
 
     //私有化构造方法以保证对象全局唯一性
     private ImageLoader(ListView listView) {
         this.listView = listView;
         tasks = new HashSet<>();
-
         //设定缓存区的大小
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 4;
-        memoryCaches = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
+        if (memoryCaches == null) {
+            int maxMemory = (int) Runtime.getRuntime().maxMemory();
+            int cacheSize = maxMemory / 4;
+            memoryCaches = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount();
+                }
+            };
+        }
     }
 
     //单例化ImageLoader
     public static ImageLoader getImageLoader(ListView mListView) {
-        if (imageLoader == null) {
-            imageLoader = new ImageLoader(mListView);
-        }
+        imageLoader = new ImageLoader(mListView);
         return imageLoader;
     }
 
     /**
      * 获取屏幕中item的下标范围，加载范围中的图片
      */
-    public void loadImage(int start, int end) {
+    public void loadImageForIndex(int start, int end) {
         for (int i = start; i < end; i++) {
-            String imgUrl = IndexAdapter.imgUrls[i];
+            String imgUrl = IndexAdapter.indexImgUrls[i];
             Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
             ImageView imageView = (ImageView) listView.findViewWithTag(imgUrl);
             if (imageView != null && bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {
                 //若不存在，开启线程下载
-                indexAsyncTask mTask = new indexAsyncTask(imgUrl);
+                imgAsyncTask mTask = new imgAsyncTask(imgUrl);
+                mTask.execute(imgUrl);
+                tasks.add(mTask);
+            }
+        }
+    }
+
+    public void loadImageForAnswer(int start, int end) {
+        for (int i = start; i < end; i++) {
+            String imgUrl = AnswerAdapter.authorImgUrls[i];
+            Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
+            ImageView imageView = (ImageView) listView.findViewWithTag(imgUrl);
+            if (imageView != null && bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            } else {
+                //若不存在，开启线程下载
+                imgAsyncTask mTask = new imgAsyncTask(imgUrl);
                 mTask.execute(imgUrl);
                 tasks.add(mTask);
             }
@@ -87,11 +102,11 @@ public class ImageLoader {
     /**
      * 利用AsyncTask来完成异步加载图片
      */
-    private class indexAsyncTask extends AsyncTask<String, Void, Bitmap> {
+    private class imgAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
         private String url;
 
-        public indexAsyncTask(String url) {
+        public imgAsyncTask(String url) {
             this.url = url;
         }
 
@@ -160,9 +175,11 @@ public class ImageLoader {
      */
     public void cancelTask() {
         if (tasks != null) {
-            for (indexAsyncTask task : tasks) {
+            for (imgAsyncTask task : tasks) {
                 task.cancel(false);
             }
         }
     }
+
+
 }

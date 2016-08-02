@@ -1,14 +1,16 @@
 package com.zhai.kanzhihu.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Index;
-import com.zhai.kanzhihu.model.IndexAdapter;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
 
@@ -19,7 +21,7 @@ import java.util.List;
  * Created by 某宅 on 2016/7/25.
  * 首页内容
  */
-public class IndexActivity extends Activity {
+public class IndexActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private List<Index> indexList = new ArrayList<>();
     private ListView listView;
@@ -29,8 +31,6 @@ public class IndexActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.index_layout);
-
-        listView = (ListView) findViewById(R.id.lv_index);
 
         //发送请求，获取首页文章列表
         HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener() {
@@ -42,10 +42,11 @@ public class IndexActivity extends Activity {
                     @Override
                     public void run() {
                         indexList = HttpUtil.parseIndexJson(response);
-
+                        listView = (ListView) findViewById(R.id.lv_index);
                         IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this,
                                 indexList, listView);
                         listView.setAdapter(indexAdapter);
+                        listView.setOnItemClickListener(IndexActivity.this);
                     }
                 });
             }
@@ -65,4 +66,18 @@ public class IndexActivity extends Activity {
 
     }
 
+    /**
+     * 处理listview里item的点击事件
+     * 跳转到答案详情页
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //拼接答案详情页url
+        String name = "/" + indexList.get(position).getIndexTag();
+        String time = "/" + indexList.get(position).getIndexTitle().replaceAll("-","");
+        String answerUrl = "http://api.kanzhihu.com/getpostanswers" + time + name;
+        Intent intent = new Intent(IndexActivity.this, AnswerActivity.class);
+        intent.putExtra("answerUrl", answerUrl);
+        startActivity(intent);
+    }
 }

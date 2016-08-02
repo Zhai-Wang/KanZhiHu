@@ -1,43 +1,45 @@
-package com.zhai.kanzhihu.model;
+package com.zhai.kanzhihu.activity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
+import com.zhai.kanzhihu.model.Answer;
+import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.util.ImageLoader;
 
 import java.util.List;
 
 /**
- * 自定义首页listview的adapter
- * Created by 某宅 on 2016/7/25.
+ * Created by 某宅 on 2016/7/31.
  */
-public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
-
-    private List<Index> indexList;
+public class AnswerAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
+    private List<Answer> answerList;
     private LayoutInflater inflater;
     private ImageLoader imageLoader;
-    public static String[] imgUrls;//用来集合图片url
+    public static String[] authorImgUrls;//用来集合图片url
     private int start, end;//标志屏幕中起始item的下标
     private Boolean isFirstIn;//记录是否首次启动
 
-    public IndexAdapter(Context context, List<Index> data, ListView listView) {
-        indexList = data;
+    public AnswerAdapter(Context context, List<Answer> data, ListView listView) {
+        answerList = data;
         inflater = LayoutInflater.from(context);
         imageLoader = ImageLoader.getImageLoader(listView);
         isFirstIn = true;
 
         //将图片的url转入数组imgUrls中
-        imgUrls = new String[indexList.size()];
-        for (int i = 0; i < indexList.size(); i++) {
-            imgUrls[i] = indexList.get(i).getIndexImgUrl();
+        authorImgUrls = new String[answerList.size()];
+        for (int i = 0; i < answerList.size(); i++) {
+            authorImgUrls[i] = answerList.get(i).getAuthorImgUrl();
         }
 
         listView.setOnScrollListener(this);
@@ -45,12 +47,12 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
 
     @Override
     public int getCount() {
-        return indexList.size();
+        return answerList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return indexList.get(position);
+        return answerList.get(position);
     }
 
     @Override
@@ -60,35 +62,37 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         ViewHolder viewHolder;
+
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.index_item, parent, false);
-            viewHolder.indexImg = (ImageView) convertView.findViewById(R.id.index_item_img);
-            viewHolder.indexTitle = (TextView) convertView.findViewById(R.id.index_item_title);
-            viewHolder.indexContent = (TextView) convertView.findViewById(R.id.index_item_content);
-            viewHolder.indexTag = (TextView) convertView.findViewById(R.id.index_item_tag);
+            convertView = inflater.inflate(R.layout.answer_item, parent, false);
+            viewHolder.authorImg = (ImageView) convertView.findViewById(R.id.author_img);
+            viewHolder.answerTitle = (TextView) convertView.findViewById(R.id.answer_title);
+            viewHolder.answerContent = (TextView) convertView.findViewById(R.id.answer_content);
+            viewHolder.authorName = (TextView) convertView.findViewById(R.id.author_name);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         //为每一个ImageView设置tag
-        viewHolder.indexImg.setTag(indexList.get(position).getIndexImgUrl());
+        viewHolder.authorImg.setTag(answerList.get(position).getAuthorImgUrl());
         //设置显示的图片
-        imageLoader.showImg(viewHolder.indexImg, indexList.get(position).getIndexImgUrl());
+        imageLoader.showImg(viewHolder.authorImg, answerList.get(position).getAuthorImgUrl());
 
-        viewHolder.indexTitle.setText(indexList.get(position).getIndexTitle());
-        viewHolder.indexContent.setText(indexList.get(position).getIndexContent());
-        viewHolder.indexTag.setText(indexList.get(position).getIndexTag());
+        viewHolder.answerTitle.setText(answerList.get(position).getAnswerTitle());
+        viewHolder.answerContent.setText(answerList.get(position).getAnswerContent());
+        viewHolder.authorName.setText(answerList.get(position).getAuthorName());
+
         return convertView;
     }
 
-    class ViewHolder {
-        public ImageView indexImg;
-        public TextView indexTitle, indexContent, indexTag;
+    private class ViewHolder {
+        private ImageView authorImg;
+        private TextView answerTitle, authorName, answerContent;
     }
-
 
     /**
      * 监听listview的滑动来执行图片加载任务
@@ -97,7 +101,7 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (scrollState == SCROLL_STATE_IDLE) {
             //停止滑动时，加载图片
-            imageLoader.loadImage(start, end);
+            imageLoader.loadImageForAnswer(start, end);
         } else {
             //滑动时停止加载任务
             imageLoader.cancelTask();
@@ -111,7 +115,7 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
         end = firstVisibleItem + visibleItemCount;
         //首次加载时并未滑动，要初始化屏幕内的内容
         if (isFirstIn && visibleItemCount > 0) {
-            imageLoader.loadImage(start, end);
+            imageLoader.loadImageForAnswer(start, end);
             isFirstIn = false;
         }
     }

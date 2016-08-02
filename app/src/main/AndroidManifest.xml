@@ -20,6 +20,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.AnswerActivity">
+        </activity>
+
     </application>
 
 </manifest>
