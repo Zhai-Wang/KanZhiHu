@@ -72,6 +72,7 @@ public class AnswerAdapter extends BaseAdapter implements AbsListView.OnScrollLi
             viewHolder.answerTitle = (TextView) convertView.findViewById(R.id.answer_title);
             viewHolder.answerContent = (TextView) convertView.findViewById(R.id.answer_content);
             viewHolder.authorName = (TextView) convertView.findViewById(R.id.author_name);
+            viewHolder.amount = (TextView) convertView.findViewById(R.id.amount);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -85,13 +86,14 @@ public class AnswerAdapter extends BaseAdapter implements AbsListView.OnScrollLi
         viewHolder.answerTitle.setText(answerList.get(position).getAnswerTitle());
         viewHolder.answerContent.setText(answerList.get(position).getAnswerContent());
         viewHolder.authorName.setText(answerList.get(position).getAuthorName());
+        viewHolder.amount.setText(answerList.get(position).getAmount());
 
         return convertView;
     }
 
     private class ViewHolder {
         private ImageView authorImg;
-        private TextView answerTitle, authorName, answerContent;
+        private TextView answerTitle, authorName, answerContent, amount;
     }
 
     /**

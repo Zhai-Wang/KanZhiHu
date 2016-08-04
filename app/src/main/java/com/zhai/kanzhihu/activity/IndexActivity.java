@@ -1,12 +1,21 @@
 package com.zhai.kanzhihu.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
@@ -74,10 +83,13 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //拼接答案详情页url
         String name = "/" + indexList.get(position).getIndexTag();
-        String time = "/" + indexList.get(position).getIndexTitle().replaceAll("-","");
+        String time = "/" + indexList.get(position).getIndexTitle().replaceAll("-", "");
         String answerUrl = "http://api.kanzhihu.com/getpostanswers" + time + name;
+        String title = indexList.get(position).getIndexTitle() +
+                IndexAdapter.getTag(indexList.get(position).getIndexTag());
         Intent intent = new Intent(IndexActivity.this, AnswerActivity.class);
         intent.putExtra("answerUrl", answerUrl);
+        intent.putExtra("title", title);
         startActivity(intent);
     }
 }

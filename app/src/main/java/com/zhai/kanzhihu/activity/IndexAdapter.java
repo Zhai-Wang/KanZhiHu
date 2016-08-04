@@ -81,19 +81,22 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
 
         viewHolder.indexTitle.setText(indexList.get(position).getIndexTitle());
         viewHolder.indexContent.setText(indexList.get(position).getIndexContent());
-        switch (indexList.get(position).getIndexTag()) {
-            case "yesterday":
-                viewHolder.indexTag.setText("昨日最新");
-                break;
-            case "recent":
-                viewHolder.indexTag.setText("近日热门");
-                break;
-            case "archive":
-                viewHolder.indexTag.setText("历史精华");
-                break;
-        }
+        String tag = indexList.get(position).getIndexTag();
+        viewHolder.indexTag.setText(getTag(tag));
 
         return convertView;
+    }
+
+    public static String getTag(String tag) {
+        switch (tag) {
+            case "yesterday":
+                return "昨日最新";
+            case "recent":
+                return "近日热门";
+            case "archive":
+                return "历史精华";
+        }
+        return "error";
     }
 
     private class ViewHolder {

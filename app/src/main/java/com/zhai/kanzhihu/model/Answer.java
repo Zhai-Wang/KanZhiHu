@@ -12,15 +12,22 @@ public class Answer {
     private String answerContent;
     private String questionId;
     private String answerId;
+    private String amount;
 
     public Answer(String answerTitle, String answerName, String answerContent, String answerImgUrl,
-                  String questionId, String answerId) {
+                  String questionId, String answerId, String amount) {
         this.authorName = answerName;
         this.answerContent = answerContent;
         this.authorImgUrl = answerImgUrl;
         this.answerTitle = answerTitle;
         this.questionId = questionId;
         this.answerId = answerId;
+        this.amount = amount;
+
+    }
+
+    public String getAmount() {
+        return amount;
     }
 
     public String getAnswerContent() {

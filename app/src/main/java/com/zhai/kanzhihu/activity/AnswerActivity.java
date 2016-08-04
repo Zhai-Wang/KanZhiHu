@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
@@ -25,6 +26,7 @@ import java.util.List;
 public class AnswerActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private ListView listView;
+    private TextView textView;
     private List<Answer> answerList = new ArrayList<>();
 
     @Override
@@ -35,6 +37,8 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
 
         Intent intent = getIntent();
         String answerUrl = intent.getStringExtra("answerUrl");//接受答案信息的地址
+        textView = (TextView) findViewById(R.id.tv_answer_title);
+        textView.setText(intent.getStringExtra("title"));
 
         HttpUtil.sendHttpRequest(answerUrl, new HttpCallbackListener() {
             @Override

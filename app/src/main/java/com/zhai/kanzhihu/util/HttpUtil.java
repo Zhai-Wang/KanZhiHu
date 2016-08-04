@@ -108,9 +108,9 @@ public class HttpUtil {
                 String answerId = jsonObject.getString("answerid");
                 String authorName = jsonObject.getString("authorname");
                 String authorImg = jsonObject.getString("avatar");
-                authorName += "   (" + jsonObject.getString("vote") + ")";
+                String amount = jsonObject.getString("vote");
                 Answer answer = new Answer(answerTitle, authorName, answerContent, authorImg,
-                        questionId, answerId);
+                        questionId, answerId, amount);
                 answerList.add(answer);
             }
         } catch (JSONException e) {
