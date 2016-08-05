@@ -7,8 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#2196F3"
-        >
+        android:background="#2196F3">
 
         <TextView
             android:id="@+id/tv_answer_title"
@@ -19,9 +18,16 @@
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/lv_answer"
+    <com.zhai.kanzhihu.util.RefreshView
+        android:id="@+id/answer_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv_answer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+
+    </com.zhai.kanzhihu.util.RefreshView>
 
 </LinearLayout>

@@ -16,6 +16,7 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
+import com.zhai.kanzhihu.util.RefreshView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
     private ListView listView;
     private TextView textView;
     private List<Answer> answerList = new ArrayList<>();
+    private RefreshView refreshView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
         String answerUrl = intent.getStringExtra("answerUrl");//接受答案信息的地址
         textView = (TextView) findViewById(R.id.tv_answer_title);
         textView.setText(intent.getStringExtra("title"));
+
+        refreshView = (RefreshView) findViewById(R.id.answer_refresh);
 
         HttpUtil.sendHttpRequest(answerUrl, new HttpCallbackListener() {
             @Override
@@ -66,6 +70,16 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
                 });
             }
         });
+
+        //下拉刷新
+        refreshView.setOnRefreshListener(new RefreshView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //检查更新
+
+                refreshView.finishRefreshing();
+            }
+        }, 0);
     }
 
     @Override

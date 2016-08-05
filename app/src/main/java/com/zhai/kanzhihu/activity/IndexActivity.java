@@ -22,6 +22,7 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
+import com.zhai.kanzhihu.util.RefreshView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,14 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
 
     private List<Index> indexList = new ArrayList<>();
     private ListView listView;
+    private RefreshView refreshView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.index_layout);
+        refreshView = (RefreshView) findViewById(R.id.index_refresh);
 
         //发送请求，获取首页文章列表
         HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener() {
@@ -72,6 +75,15 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
             }
         });
 
+        //下拉刷新
+        refreshView.setOnRefreshListener(new RefreshView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //检查更新
+
+                refreshView.finishRefreshing();
+            }
+        }, 0);
 
     }
 

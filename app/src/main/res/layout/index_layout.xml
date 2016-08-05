@@ -21,11 +21,15 @@
             android:textStyle="normal" />
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/lv_index"
+    <com.zhai.kanzhihu.util.RefreshView
+        android:id="@+id/index_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </ListView>
+        <ListView
+            android:id="@+id/lv_index"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.zhai.kanzhihu.util.RefreshView>
 
 </LinearLayout>
