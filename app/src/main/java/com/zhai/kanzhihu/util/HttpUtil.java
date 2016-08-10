@@ -1,10 +1,5 @@
 package com.zhai.kanzhihu.util;
 
-import android.os.Handler;
-import android.os.Message;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
-
 import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.model.Index;
 
@@ -13,11 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +21,7 @@ import java.util.List;
  */
 public class HttpUtil {
 
+    public static String newestTime;//记录最新一篇的时间戳
 
     /**
      * 请求服务器数据
@@ -80,6 +74,9 @@ public class HttpUtil {
             for (int i = 0; i < jsonArray.length(); i++) {
                 jsonObject = jsonArray.getJSONObject(i);
                 String indexImgUrl = jsonObject.getString("pic");
+                if (i == 0) {
+                    newestTime = jsonObject.getString("publishtime");
+                }
                 String indexTitle = jsonObject.getString("date");
                 String indexTag = jsonObject.getString("name");
                 String indexContent = jsonObject.getString("excerpt");

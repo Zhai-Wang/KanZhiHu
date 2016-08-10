@@ -17,6 +17,7 @@ import com.zhai.kanzhihu.R;
 
 /**
  * Created by 某宅 on 2016/8/5.
+ * listview的下拉刷新
  */
 public class RefreshableView extends LinearLayout implements View.OnTouchListener {
 
@@ -45,9 +46,6 @@ public class RefreshableView extends LinearLayout implements View.OnTouchListene
 
     /**
      * 在构造函数中动态添加布局
-     *
-     * @param context
-     * @param attributeSet
      */
     public RefreshableView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -60,13 +58,14 @@ public class RefreshableView extends LinearLayout implements View.OnTouchListene
     }
 
     /**
+     * 注册监听器
+     */
+    public void setOnRefreshlistener(PullToRefreshListener listener) {
+        pullToRefreshListener = listener;
+    }
+
+    /**
      * 初始化操作，如隐藏下拉头，注册Touch事件
-     *
-     * @param changed
-     * @param l
-     * @param t
-     * @param r
-     * @param b
      */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -83,10 +82,6 @@ public class RefreshableView extends LinearLayout implements View.OnTouchListene
 
     /**
      * 下拉刷新的具体逻辑
-     *
-     * @param v
-     * @param event
-     * @return
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -144,23 +139,14 @@ public class RefreshableView extends LinearLayout implements View.OnTouchListene
     }
 
     /**
-     * 注册监听器
+     * 刷新完成后调用
      */
-    public void setOnRefreshlistener(PullToRefreshListener listener) {
-        pullToRefreshListener = listener;
-    }
-
-    /**
-     *刷新完成后调用
-     */
-    public void finishRefreshing(){
+    public void finishRefreshing() {
         new HideHeaderTask().execute();
     }
 
     /**
      * 判断listview的滚动状态
-     *
-     * @param event
      */
     private void setIsAbleToPull(MotionEvent event) {
         View firstChild = listView.getChildAt(0);

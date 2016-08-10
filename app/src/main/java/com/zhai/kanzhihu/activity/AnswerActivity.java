@@ -1,6 +1,7 @@
 package com.zhai.kanzhihu.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
     private TextView textView;
     private List<Answer> answerList = new ArrayList<>();
     private RefreshableView refreshableView;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +39,39 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.answer_layout);
 
+        progressDialog = new ProgressDialog(AnswerActivity.this);
+        progressDialog.setMessage("加载中......");
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+
         Intent intent = getIntent();
-        String answerUrl = intent.getStringExtra("answerUrl");//接受答案信息的地址
+        final String answerUrl = intent.getStringExtra("answerUrl");//接受答案信息的地址
         textView = (TextView) findViewById(R.id.tv_answer_title);
         textView.setText(intent.getStringExtra("title"));
 
-        refreshableView = (RefreshableView) findViewById(R.id.answer_refresh);
+        sendRequest(answerUrl);
 
+        refreshableView = (RefreshableView) findViewById(R.id.answer_refresh);
+        //下拉刷新
+        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sendRequest(answerUrl);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AnswerActivity.this, "更新完成", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                refreshableView.finishRefreshing();
+            }
+        });
+    }
+
+    /**
+     * 发起请求获得数据
+     */
+    private void sendRequest(String answerUrl){
         HttpUtil.sendHttpRequest(answerUrl, new HttpCallbackListener() {
             @Override
             public void onFinish(final String response) {
@@ -56,6 +84,10 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
                                 answerList, listView);
                         listView.setAdapter(adapter);
                         listView.setOnItemClickListener(AnswerActivity.this);
+                        if (answerList.get(listView.getFirstVisiblePosition()).getAnswerContent()
+                                != null) {
+                            progressDialog.dismiss();
+                        }
                     }
                 });
             }
@@ -68,19 +100,6 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
                         Toast.makeText(AnswerActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     }
                 });
-            }
-        });
-
-        //下拉刷新
-        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
-            @Override
-            public void onRefresh() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                refreshableView.finishRefreshing();
             }
         });
     }

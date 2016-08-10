@@ -1,6 +1,7 @@
 package com.zhai.kanzhihu.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,8 +14,12 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
+import com.zhai.kanzhihu.util.ImageLoader;
 import com.zhai.kanzhihu.util.PullToRefreshListener;
 import com.zhai.kanzhihu.util.RefreshableView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +33,38 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
     private List<Index> indexList = new ArrayList<>();
     private ListView listView;
     private RefreshableView refreshableView;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.index_layout);
+        listView = (ListView) findViewById(R.id.lv_index);
         refreshableView = (RefreshableView) findViewById(R.id.index_refresh);
 
+        progressDialog = new ProgressDialog(IndexActivity.this);
+        progressDialog.setMessage("加载中......");
+        progressDialog.setCancelable(true);
+        progressDialog.show();
+
+        sendRequest();
+        //下拉刷新
+        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                checkNew();
+                refreshableView.finishRefreshing();
+            }
+        });
+
+
+    }
+
+    /**
+     * 发起请求获得首页数据
+     */
+    private void sendRequest() {
         //发送请求，获取首页文章列表
         HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener() {
 
@@ -46,11 +75,14 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
                     @Override
                     public void run() {
                         indexList = HttpUtil.parseIndexJson(response);
-                        listView = (ListView) findViewById(R.id.lv_index);
                         IndexAdapter indexAdapter = new IndexAdapter(IndexActivity.this,
                                 indexList, listView);
                         listView.setAdapter(indexAdapter);
                         listView.setOnItemClickListener(IndexActivity.this);
+                        if (indexList.get(listView.getFirstVisiblePosition()).getIndexContent()
+                                != null) {
+                            progressDialog.dismiss();
+                        }
                     }
                 });
             }
@@ -66,17 +98,50 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
                 });
             }
         });
+    }
 
-        //下拉刷新
-        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
+    /**
+     * 判断是否需要刷新数据
+     */
+    public void checkNew() {
+        String address = "http://api.kanzhihu.com/checknew/" + HttpUtil.newestTime;
+        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
-            public void onRefresh() {
+            public void onFinish(String response) {
                 try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String isNew = jsonObject.getString("result");
+                    if (isNew == "true") {
+                        sendRequest();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(IndexActivity.this, "更新完毕",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(IndexActivity.this, "当前已是最新",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                refreshableView.finishRefreshing();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(IndexActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }

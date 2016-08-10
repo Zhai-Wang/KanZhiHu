@@ -25,7 +25,9 @@ public class IndexAdapter extends BaseAdapter implements AbsListView.OnScrollLis
     private List<Index> indexList;
     private LayoutInflater inflater;
     private ImageLoader imageLoader;
+
     public static String[] indexImgUrls;//用来集合图片url
+
     private int start, end;//标志屏幕中起始item的下标
     private Boolean isFirstIn;//记录是否首次启动
 
