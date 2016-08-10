@@ -1,28 +1,20 @@
 package com.zhai.kanzhihu.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
-import com.zhai.kanzhihu.util.RefreshView;
+import com.zhai.kanzhihu.util.PullToRefreshListener;
+import com.zhai.kanzhihu.util.RefreshableView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +27,14 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
 
     private List<Index> indexList = new ArrayList<>();
     private ListView listView;
-    private RefreshView refreshView;
+    private RefreshableView refreshableView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.index_layout);
-        refreshView = (RefreshView) findViewById(R.id.index_refresh);
+        refreshableView = (RefreshableView) findViewById(R.id.index_refresh);
 
         //发送请求，获取首页文章列表
         HttpUtil.sendHttpRequest("http://api.kanzhihu.com/getposts", new HttpCallbackListener() {
@@ -76,15 +68,17 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
         });
 
         //下拉刷新
-        refreshView.setOnRefreshListener(new RefreshView.PullToRefreshListener() {
+        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
             @Override
             public void onRefresh() {
-                //检查更新
-
-                refreshView.finishRefreshing();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshableView.finishRefreshing();
             }
-        }, 0);
-
+        });
     }
 
     /**

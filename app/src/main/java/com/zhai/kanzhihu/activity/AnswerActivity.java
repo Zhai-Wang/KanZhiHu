@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -16,7 +15,8 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
-import com.zhai.kanzhihu.util.RefreshView;
+import com.zhai.kanzhihu.util.PullToRefreshListener;
+import com.zhai.kanzhihu.util.RefreshableView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
     private ListView listView;
     private TextView textView;
     private List<Answer> answerList = new ArrayList<>();
-    private RefreshView refreshView;
+    private RefreshableView refreshableView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
         textView = (TextView) findViewById(R.id.tv_answer_title);
         textView.setText(intent.getStringExtra("title"));
 
-        refreshView = (RefreshView) findViewById(R.id.answer_refresh);
+        refreshableView = (RefreshableView) findViewById(R.id.answer_refresh);
 
         HttpUtil.sendHttpRequest(answerUrl, new HttpCallbackListener() {
             @Override
@@ -72,14 +72,17 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
         });
 
         //下拉刷新
-        refreshView.setOnRefreshListener(new RefreshView.PullToRefreshListener() {
+        refreshableView.setOnRefreshlistener(new PullToRefreshListener() {
             @Override
             public void onRefresh() {
-                //检查更新
-
-                refreshView.finishRefreshing();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshableView.finishRefreshing();
             }
-        }, 0);
+        });
     }
 
     @Override
