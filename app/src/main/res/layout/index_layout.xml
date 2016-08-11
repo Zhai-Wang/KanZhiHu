@@ -21,7 +21,7 @@
             android:textStyle="normal" />
     </RelativeLayout>
 
-    <com.zhai.kanzhihu.util.RefreshableView
+    <com.zhai.kanzhihu.view.RefreshableView
         android:id="@+id/index_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -30,6 +30,6 @@
             android:id="@+id/lv_index"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </com.zhai.kanzhihu.util.RefreshableView>
+    </com.zhai.kanzhihu.view.RefreshableView>
 
 </LinearLayout>

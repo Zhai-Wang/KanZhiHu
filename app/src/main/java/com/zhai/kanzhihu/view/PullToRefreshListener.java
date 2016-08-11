@@ -1,4 +1,4 @@
-package com.zhai.kanzhihu.util;
+package com.zhai.kanzhihu.view;
 
 /**
  * Created by 某宅 on 2016/8/10.

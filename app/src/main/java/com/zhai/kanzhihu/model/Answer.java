@@ -13,9 +13,10 @@ public class Answer {
     private String questionId;
     private String answerId;
     private String amount;
+    private String authorHash;
 
     public Answer(String answerTitle, String answerName, String answerContent, String answerImgUrl,
-                  String questionId, String answerId, String amount) {
+                  String questionId, String answerId, String amount, String authorHash) {
         this.authorName = answerName;
         this.answerContent = answerContent;
         this.authorImgUrl = answerImgUrl;
@@ -23,7 +24,7 @@ public class Answer {
         this.questionId = questionId;
         this.answerId = answerId;
         this.amount = amount;
-
+        this.authorHash = authorHash;
     }
 
     public String getAmount() {
@@ -52,5 +53,9 @@ public class Answer {
 
     public String getAnswerId() {
         return answerId;
+    }
+
+    public String getAuthorHash() {
+        return authorHash;
     }
 }

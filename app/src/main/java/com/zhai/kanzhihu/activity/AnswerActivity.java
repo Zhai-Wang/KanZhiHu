@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,8 +17,8 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
-import com.zhai.kanzhihu.util.PullToRefreshListener;
-import com.zhai.kanzhihu.util.RefreshableView;
+import com.zhai.kanzhihu.view.PullToRefreshListener;
+import com.zhai.kanzhihu.view.RefreshableView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +30,10 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
 
     private ListView listView;
     private TextView textView;
+    private ImageButton imageButton;
     private List<Answer> answerList = new ArrayList<>();
     private RefreshableView refreshableView;
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +68,21 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
                 refreshableView.finishRefreshing();
             }
         });
+
+        //标题栏返回按钮
+        imageButton = (ImageButton) findViewById(R.id.back);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     /**
      * 发起请求获得数据
      */
-    private void sendRequest(String answerUrl){
+    private void sendRequest(String answerUrl) {
         HttpUtil.sendHttpRequest(answerUrl, new HttpCallbackListener() {
             @Override
             public void onFinish(final String response) {

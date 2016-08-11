@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.LruCache;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -73,9 +74,9 @@ public class ImageLoader {
         for (int i = start; i < end; i++) {
             String imgUrl = AnswerAdapter.authorImgUrls[i];
             Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
-            ImageView imageView = (ImageView) listView.findViewWithTag(imgUrl);
-            if (imageView != null && bitmap != null) {
-                imageView.setImageBitmap(bitmap);
+            ImageButton imageButton = (ImageButton) listView.findViewWithTag(imgUrl);
+            if (imageButton != null && bitmap != null) {
+                imageButton.setImageBitmap(bitmap);
             } else {
                 //若不存在，开启线程下载
                 imgAsyncTask mTask = new imgAsyncTask(imgUrl);
@@ -156,14 +157,14 @@ public class ImageLoader {
     /**
      * 从缓存获取bitmap
      */
-    public Bitmap getBitmapFromLruCache(String url) {
+    private Bitmap getBitmapFromLruCache(String url) {
         return memoryCaches.get(url);
     }
 
     /**
      * 向缓存中添加bitmap
      */
-    public void addBitmapToLruCache(String url, Bitmap bitmap) {
+    private void addBitmapToLruCache(String url, Bitmap bitmap) {
         if (getBitmapFromLruCache(url) == null) {
             memoryCaches.put(url, bitmap);
         }
@@ -180,6 +181,4 @@ public class ImageLoader {
             }
         }
     }
-
-
 }

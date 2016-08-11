@@ -14,9 +14,8 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.model.Index;
 import com.zhai.kanzhihu.util.HttpCallbackListener;
 import com.zhai.kanzhihu.util.HttpUtil;
-import com.zhai.kanzhihu.util.ImageLoader;
-import com.zhai.kanzhihu.util.PullToRefreshListener;
-import com.zhai.kanzhihu.util.RefreshableView;
+import com.zhai.kanzhihu.view.PullToRefreshListener;
+import com.zhai.kanzhihu.view.RefreshableView;
 
 import org.json.JSONException;
 import org.json.JSONObject;

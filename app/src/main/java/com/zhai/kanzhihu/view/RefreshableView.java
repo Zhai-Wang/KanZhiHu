@@ -1,4 +1,4 @@
-package com.zhai.kanzhihu.util;
+package com.zhai.kanzhihu.view;
 
 import android.content.Context;
 import android.os.AsyncTask;

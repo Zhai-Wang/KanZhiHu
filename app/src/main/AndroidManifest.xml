@@ -23,6 +23,9 @@
         <activity android:name=".activity.AnswerActivity">
         </activity>
 
+        <activity android:name=".activity.AuthorActivity">
+        </activity>
+
     </application>
 
 </manifest>

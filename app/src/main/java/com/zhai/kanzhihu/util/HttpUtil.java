@@ -1,6 +1,7 @@
 package com.zhai.kanzhihu.util;
 
 import com.zhai.kanzhihu.model.Answer;
+import com.zhai.kanzhihu.model.Author;
 import com.zhai.kanzhihu.model.Index;
 
 import org.json.JSONArray;
@@ -104,15 +105,35 @@ public class HttpUtil {
                 String questionId = jsonObject.getString("questionid");
                 String answerId = jsonObject.getString("answerid");
                 String authorName = jsonObject.getString("authorname");
+                String authorHash = jsonObject.getString("authorhash");
                 String authorImg = jsonObject.getString("avatar");
                 String amount = jsonObject.getString("vote");
                 Answer answer = new Answer(answerTitle, authorName, answerContent, authorImg,
-                        questionId, answerId, amount);
+                        questionId, answerId, amount, authorHash);
                 answerList.add(answer);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return answerList;
+    }
+
+    /**
+     * 解析用户基本信息
+     */
+    public static List<Author> parseAuthorJson(String response){
+        List<Author> authorList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            String authorName = jsonObject.getString("name");
+            String authorImgUrl = jsonObject.getString("avatar");
+            String authorSig = jsonObject.getString("signature");
+            String authorDes = jsonObject.getString("description");
+            Author author = new Author(authorImgUrl, authorName, authorSig, authorDes);
+            authorList.add(author);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return authorList;
     }
 }

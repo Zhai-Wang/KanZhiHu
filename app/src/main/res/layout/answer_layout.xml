@@ -9,6 +9,15 @@
         android:layout_height="50dp"
         android:background="#2196F3">
 
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/back"
+            android:background="#0000"/>
+
         <TextView
             android:id="@+id/tv_answer_title"
             android:layout_width="wrap_content"
@@ -18,7 +27,7 @@
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <com.zhai.kanzhihu.util.RefreshableView
+    <com.zhai.kanzhihu.view.RefreshableView
         android:id="@+id/answer_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -28,6 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></ListView>
 
-    </com.zhai.kanzhihu.util.RefreshableView>
+    </com.zhai.kanzhihu.view.RefreshableView>
 
 </LinearLayout>
