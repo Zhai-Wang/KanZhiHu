@@ -2,6 +2,10 @@ package com.zhai.kanzhihu.util;
 
 import com.zhai.kanzhihu.model.Answer;
 import com.zhai.kanzhihu.model.Author;
+import com.zhai.kanzhihu.model.AuthorDetail;
+import com.zhai.kanzhihu.model.AuthorStar;
+import com.zhai.kanzhihu.model.AuthorTopAnswers;
+import com.zhai.kanzhihu.model.AuthorTrend;
 import com.zhai.kanzhihu.model.Index;
 
 import org.json.JSONArray;
@@ -15,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Adler32;
 
 
 /**
@@ -121,7 +126,7 @@ public class HttpUtil {
     /**
      * 解析用户基本信息
      */
-    public static List<Author> parseAuthorJson(String response){
+    public static List<Author> parseAuthorJson(String response) {
         List<Author> authorList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -135,5 +140,92 @@ public class HttpUtil {
             e.printStackTrace();
         }
         return authorList;
+    }
+
+    public static List<AuthorDetail> parseAuthorDetailJson(String response) {
+        List<AuthorDetail> authorDetailList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            jsonObject = jsonObject.getJSONObject("detail");
+            String ask = jsonObject.getString("ask");
+            String answer = jsonObject.getString("answer");
+            String post = jsonObject.getString("post");
+            String agree = jsonObject.getString("agree");
+            String followee = jsonObject.getString("followee");
+            String follower = jsonObject.getString("follower");
+            String thanks = jsonObject.getString("thanks");
+            String fav = jsonObject.getString("fav");
+            String mostvote = jsonObject.getString("mostvote");
+            AuthorDetail authorDetail = new AuthorDetail(ask, answer, post, agree, followee,
+                    follower, thanks, fav, mostvote);
+            authorDetailList.add(authorDetail);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return authorDetailList;
+    }
+
+    public static List<AuthorStar> parseAuthorStarJson(String response) {
+        List<AuthorStar> authorStarList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            jsonObject = jsonObject.getJSONObject("star");
+            String answerrank = jsonObject.getString("answerrank");
+            String agreerank = jsonObject.getString("agreerank");
+            String ratiorank = jsonObject.getString("ratiorank");
+            String followerrank = jsonObject.getString("followerrank");
+            String favrank = jsonObject.getString("favrank");
+            String count1000rank = jsonObject.getString("count1000rank");
+            String count100rank = jsonObject.getString("count100rank");
+            AuthorStar authorStar = new AuthorStar(answerrank, agreerank, ratiorank,
+                    followerrank, favrank, count1000rank, count100rank);
+            authorStarList.add(authorStar);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return authorStarList;
+    }
+
+    public static List<AuthorTrend> parseAuthorTrendJson(String response) {
+        List<AuthorTrend> authorTrendList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("trend");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonObject = jsonArray.getJSONObject(i);
+                String date = jsonObject.getString("date");
+                String answer = jsonObject.getString("answer");
+                String agree = jsonObject.getString("agree");
+                String follower = jsonObject.getString("follower");
+                AuthorTrend authorTrend = new AuthorTrend(date, answer, agree, follower);
+                authorTrendList.add(authorTrend);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return authorTrendList;
+    }
+
+    public static List<AuthorTopAnswers> parseAuthorTopAnswersJson(String response) {
+        List<AuthorTopAnswers> authorTopAnswersList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("topanswers");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonObject = jsonArray.getJSONObject(i);
+                String title = jsonObject.getString("title");
+                String link = jsonObject.getString("link");
+                String agree = jsonObject.getString("agree");
+                String date = jsonObject.getString("date");
+                String ispost = jsonObject.getString("ispost");
+                AuthorTopAnswers authorTopAnswers = new AuthorTopAnswers(title, link, agree, date,
+                        ispost);
+                authorTopAnswersList.add(authorTopAnswers);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return authorTopAnswersList;
     }
 }
