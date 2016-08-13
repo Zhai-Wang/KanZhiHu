@@ -5,4 +5,8 @@
     <string name="yesterday">昨日最新</string>
     <string name="item_history">历史精华</string>
     <string name="index_img">index</string>
+    <string name="tab_detail">详细数据</string>
+    <string name="tab_star">相关排名</string>
+    <string name="tab_trend">今日动态</string>
+    <string name="tab_topanswer">高票答案</string>
 </resources>

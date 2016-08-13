@@ -40,6 +40,8 @@
         android:layout_marginTop="5dp"
         android:textSize="20sp" />
 
+    <include layout="@layout/author_tab"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/author_viewpager"
         android:layout_width="match_parent"
