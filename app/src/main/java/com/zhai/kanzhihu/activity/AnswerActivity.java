@@ -48,7 +48,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
 
         Intent intent = getIntent();
         final String answerUrl = intent.getStringExtra("answerUrl");//接受答案信息的地址
-        textView = (TextView) findViewById(R.id.tv_answer_title);
+        textView = (TextView) findViewById(R.id.title_text);
         textView.setText(intent.getStringExtra("title"));
 
         sendRequest(answerUrl);
@@ -70,7 +70,7 @@ public class AnswerActivity extends Activity implements AdapterView.OnItemClickL
         });
 
         //标题栏返回按钮
-        imageButton = (ImageButton) findViewById(R.id.back);
+        imageButton = (ImageButton) findViewById(R.id.title_back);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

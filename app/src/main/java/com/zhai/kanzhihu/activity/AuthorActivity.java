@@ -53,6 +53,7 @@ public class AuthorActivity extends FragmentActivity implements View.OnClickList
     private AuthorTrendFragment authorTrendFragment;
     private AuthorTopAnswerFragment authorTopAnswerFragment;
 
+    private TextView titleText;
     private ImageView authorImg;
     private TextView authorName, authorSig, authorDes;
     private Bitmap bitmap;
@@ -63,7 +64,7 @@ public class AuthorActivity extends FragmentActivity implements View.OnClickList
     private ImageView tabLine;
 
     private float moveDis;//下划线移动距离
-    private Boolean isScrolling=false, isBackScrolling=false;//记录下划线移动状态
+    private Boolean isScrolling = false, isBackScrolling = false;//记录下划线移动状态
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class AuthorActivity extends FragmentActivity implements View.OnClickList
      * 初始化控件
      */
     private void initView() {
+        titleText = (TextView) findViewById(R.id.title_text);
         authorImg = (ImageView) findViewById(R.id.author_img);
         authorName = (TextView) findViewById(R.id.author_name);
         authorSig = (TextView) findViewById(R.id.author_sig);
@@ -102,6 +104,7 @@ public class AuthorActivity extends FragmentActivity implements View.OnClickList
         tabTrend.setOnClickListener(this);
         tabTopanswer.setOnClickListener(this);
         viewPager.addOnPageChangeListener(this);
+        titleText.setText("用户详情");
     }
 
     /**

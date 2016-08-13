@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhai.kanzhihu.R;
@@ -32,7 +35,9 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
     private List<Index> indexList = new ArrayList<>();
     private ListView listView;
     private RefreshableView refreshableView;
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
+    private TextView titleText;
+    private ImageButton back, close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,13 @@ public class IndexActivity extends Activity implements AdapterView.OnItemClickLi
         progressDialog.setMessage("加载中......");
         progressDialog.setCancelable(true);
         progressDialog.show();
+
+        titleText = (TextView) findViewById(R.id.title_text);
+        back = (ImageButton) findViewById(R.id.title_back);
+        close = (ImageButton) findViewById(R.id.title_close);
+        titleText.setText("看知乎");
+        back.setVisibility(View.GONE);
+        close.setVisibility(View.GONE);
 
         sendRequest();
         //下拉刷新

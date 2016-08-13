@@ -4,22 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/rl_index_title"
+    <com.zhai.kanzhihu.view.TitleLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#2196F3"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="看知乎"
-            android:textColor="#ffffff"
-            android:textSize="25sp"
-            android:textStyle="normal" />
-    </RelativeLayout>
+        android:layout_height="wrap_content"></com.zhai.kanzhihu.view.TitleLayout>
 
     <com.zhai.kanzhihu.view.RefreshableView
         android:id="@+id/index_refresh"
