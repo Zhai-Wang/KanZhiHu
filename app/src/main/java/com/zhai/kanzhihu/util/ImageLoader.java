@@ -1,8 +1,10 @@
 package com.zhai.kanzhihu.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.LruCache;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,6 +14,10 @@ import com.zhai.kanzhihu.R;
 import com.zhai.kanzhihu.activity.AnswerAdapter;
 import com.zhai.kanzhihu.activity.IndexAdapter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
@@ -27,6 +33,8 @@ public class ImageLoader {
     private ListView listView;
     private Set<imgAsyncTask> tasks;//保存当前异步加载的对象
     private static LruCache<String, Bitmap> memoryCaches;
+    private static final String LOCAL_CACHE_PATH =
+            Environment.getExternalStorageDirectory().getAbsolutePath() + "/ImgCache";//本地文件保存路径
 
     //私有化构造方法以保证对象全局唯一性
     private ImageLoader(ListView listView) {
@@ -57,12 +65,17 @@ public class ImageLoader {
     public void loadImageForIndex(int start, int end) {
         for (int i = start; i < end; i++) {
             String imgUrl = IndexAdapter.indexImgUrls[i];
-            Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
+            //优先从内存获取图片，若不存在则从本地获取
+            Bitmap bitmap = getBitmapFromLruCache(imgUrl);
+            if (bitmap == null) {
+                bitmap = getBitmapFromLocalCache(imgUrl);
+            }
             ImageView imageView = (ImageView) listView.findViewWithTag(imgUrl);
+            //若bitmap存在，直接设置
             if (imageView != null && bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {
-                //若不存在，开启线程下载
+                //若不存在，开启线程从网络下载
                 imgAsyncTask mTask = new imgAsyncTask(imgUrl);
                 mTask.execute(imgUrl);
                 tasks.add(mTask);
@@ -73,8 +86,13 @@ public class ImageLoader {
     public void loadImageForAnswer(int start, int end) {
         for (int i = start; i < end; i++) {
             String imgUrl = AnswerAdapter.authorImgUrls[i];
-            Bitmap bitmap = getBitmapFromLruCache(imgUrl);//从缓存中获取bitmap
+            //优先从内存获取图片，若不存在则从本地获取
+            Bitmap bitmap = getBitmapFromLruCache(imgUrl);
+            if (bitmap == null) {
+                bitmap = getBitmapFromLocalCache(imgUrl);
+            }
             ImageButton imageButton = (ImageButton) listView.findViewWithTag(imgUrl);
+            //若bitmap存在，直接设置
             if (imageButton != null && bitmap != null) {
                 imageButton.setImageBitmap(bitmap);
             } else {
@@ -91,7 +109,12 @@ public class ImageLoader {
      * 反之设置默认的本地图片
      */
     public void showImg(ImageView imageView, String url) {
+        //优先从内存获取图片，若不存在则从本地获取
         Bitmap bitmap = getBitmapFromLruCache(url);
+        if (bitmap == null) {
+            bitmap = getBitmapFromLocalCache(url);
+        }
+        //若bitmap存在，直接设置
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {
@@ -117,6 +140,7 @@ public class ImageLoader {
             Bitmap bitmap = getBitmapFromUrl(url);
             if (bitmap != null) {
                 addBitmapToLruCache(url, bitmap);//将bitmap添加到缓存中
+                addBitmapToLocalCache(url, bitmap);//将bitmap添加到本地
             }
             return bitmap;
         }
@@ -155,18 +179,51 @@ public class ImageLoader {
     }
 
     /**
-     * 从缓存获取bitmap
+     * 从内存缓存获取bitmap
      */
     private Bitmap getBitmapFromLruCache(String url) {
         return memoryCaches.get(url);
     }
 
     /**
-     * 向缓存中添加bitmap
+     * 向内存缓存中添加bitmap
      */
     private void addBitmapToLruCache(String url, Bitmap bitmap) {
         if (getBitmapFromLruCache(url) == null) {
             memoryCaches.put(url, bitmap);
+        }
+    }
+
+    /**
+     * 从本地获取图片
+     */
+    private Bitmap getBitmapFromLocalCache(String url) {
+        Bitmap bitmap = null;
+        String fileName = url;
+        File file = new File(LOCAL_CACHE_PATH, fileName);//将url作为文件名
+        try {
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    /**
+     * 将图片保存到本地
+     */
+    private void addBitmapToLocalCache(String url, Bitmap bitmap) {
+        String fileName = url;
+        File file = new File(LOCAL_CACHE_PATH, fileName);//将url作为文件名
+        File parentFile = file.getParentFile();
+        if (!parentFile.exists()) {//判断父文件是否存在
+            parentFile.mkdirs();
+        }
+        try {
+            //保存图片
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
