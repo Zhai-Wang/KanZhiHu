@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KanZhiHu</string>
+    <string name="app_name">看知乎</string>
     <string name="history">历史精华</string>
     <string name="recent">近日热门</string>
     <string name="yesterday">昨日最新</string>
