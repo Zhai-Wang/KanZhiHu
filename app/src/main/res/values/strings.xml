@@ -9,4 +9,6 @@
     <string name="tab_star">相关排名</string>
     <string name="tab_trend">今日动态</string>
     <string name="tab_topanswer">高票答案</string>
+    <string name="hint_no_sig">该用户没有签名</string>
+    <string name="hint_no_des">该用户没有个人描述</string>
 </resources>

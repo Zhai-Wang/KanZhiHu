@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
@@ -33,7 +33,9 @@
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:textSize="20sp" />
+        android:hint="@string/hint_no_sig"
+        android:maxLines="2"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/author_des"
@@ -42,9 +44,11 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="5dp"
-        android:textSize="20sp" />
+        android:hint="@string/hint_no_des"
+        android:maxLines="3"
+        android:textSize="15sp" />
 
-    <include layout="@layout/author_tab"/>
+    <include layout="@layout/author_tab" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/author_viewpager"
