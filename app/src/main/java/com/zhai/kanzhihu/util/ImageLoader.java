@@ -1,11 +1,9 @@
 package com.zhai.kanzhihu.util;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageButton;
 import android.widget.ImageView;
