@@ -1,6 +1,6 @@
 # 看知乎
 
-&emsp;基于看知乎API（http://www.kanzhihu.com）个人制作的android客户端
+&emsp;基于看知乎API（http://www.kanzhihu.com） 个人制作的Android客户端  [点此下载](./看知乎.apk)
 
 ## 基本功能：
 &emsp;获取近期热门回答的列表，可以点击跳转到浏览器或知乎客户端；以及用户的相关动态
